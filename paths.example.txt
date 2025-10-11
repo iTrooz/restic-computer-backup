@@ -1,8 +1,6 @@
 ~/.ssh
 ~/.config/git
 ~/.config/zsh
-~/.local/share/Dolphin-Cloud
 ~/.gnupg
 ~/.config/Bitwarden CLI/data.json
-~/moi/others/restic
 tmp/secret_store.yaml
