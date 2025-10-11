@@ -19,14 +19,14 @@ on_exit() {
 # Set working directory
 cd "$(realpath $(dirname $0))"
 
-# Read folders from folders.txt, expand ~, and store as array
-echo "Read folders to backup from folders.txt"
-BACKUP_FOLDERS=()
+# Read paths from paths.txt, expand ~, and store as array
+echo "Read paths to backup from paths.txt"
+BACKUP_PATHS=()
 while IFS= read -r line || [ -n "$line" ]; do
     [[ -z "$line" ]] && continue
-    BACKUP_FOLDERS+=("$(eval echo $line)")
-done < "folders.txt"
-echo "Folders to backup (${#BACKUP_FOLDERS[@]}): ${BACKUP_FOLDERS[@]}"
+    BACKUP_PATHS+=("$(eval echo $line)")
+done < "paths.txt"
+echo "Paths to backup (${#BACKUP_PATHS[@]}): ${BACKUP_PATHS[@]}"
 
 # Do not run if on a metered network
 for uuid in $(nmcli --fields=uuid connection show --active | tail -n +2); do
@@ -47,7 +47,7 @@ for hook in "./hooks/"*; do
 done
 
 echo "Run restic backup"
-backup_output="$(./restic.sh backup "${BACKUP_FOLDERS[@]}" --json)"
+backup_output="$(./restic.sh backup "${BACKUP_PATHS[@]}" --json)"
 
 # Delete temporary folder
 rm -rf ./tmp
