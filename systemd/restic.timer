@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily timer for restic
+
+[Timer]
+OnActiveSec=5
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
