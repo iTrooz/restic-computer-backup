@@ -5,3 +5,4 @@
 ~/.gnupg
 ~/.config/Bitwarden CLI/data.json
 ~/moi/others/restic
+tmp/secret_store.yaml

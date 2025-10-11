@@ -36,6 +36,10 @@ for uuid in $(nmcli --fields=uuid connection show --active | tail -n +2); do
     fi
 done
 
+# Create temporary folder for hooks data
+rm -rf $SCRIPT_DIR/tmp
+mkdir -p $SCRIPT_DIR/tmp
+
 echo "Run hooks"
 for hook in "$SCRIPT_DIR/hooks/"*; do
     [ -x "$hook" ] && "$hook"
@@ -43,6 +47,9 @@ done
 
 echo "Run restic backup"
 backup_output="$($SCRIPT_DIR/restic.sh backup "${BACKUP_FOLDERS[@]}" --json)"
+
+# Delete temporary folder
+rm -rf $SCRIPT_DIR/tmp
 
 echo "Parse backup summary and notify"
 last_json=$(echo "$backup_output" | jq -s '.[-1]')
