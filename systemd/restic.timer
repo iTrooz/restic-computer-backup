@@ -2,7 +2,6 @@
 Description=Daily timer for restic
 
 [Timer]
-OnActiveSec=5
 OnCalendar=daily
 Persistent=true
 
