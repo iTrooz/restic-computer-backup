@@ -24,6 +24,14 @@ set -a
 . "$PWD/.env"
 set +a
 
+# Do not run if on a metered network
+for uuid in $(nmcli --fields=uuid connection show --active | tail -n +2); do
+    metered=$(nmcli connection show "$uuid" | grep -i metered | awk '{print $2}')
+    echo "connection $uuid metered status: $metered"
+    if [ "$metered" = "yes" ]; then
+        exit 10
+    fi
+done
 
 # Read paths from paths.txt, expand ~, and store as array
 echo "Read paths to backup from paths.txt"
@@ -33,15 +41,6 @@ while IFS= read -r line || [ -n "$line" ]; do
     BACKUP_PATHS+=("$(eval echo $line)")
 done < "paths.txt"
 echo "Paths to backup (${#BACKUP_PATHS[@]}): ${BACKUP_PATHS[@]}"
-
-# Do not run if on a metered network
-for uuid in $(nmcli --fields=uuid connection show --active | tail -n +2); do
-    metered=$(nmcli connection show "$uuid" | grep -i metered | awk '{print $2}')
-    echo "connection $uuid metered status: $metered"
-    if [ "$metered" = "yes" ]; then
-        exit 10
-    fi
-done
 
 # Create temporary folder for hooks data
 rm -rf ./tmp
