@@ -19,6 +19,12 @@ on_exit() {
 # Set working directory
 cd "$(realpath $(dirname $0))"
 
+# Load .env
+set -a
+. "$PWD/.env"
+set +a
+
+
 # Read paths from paths.txt, expand ~, and store as array
 echo "Read paths to backup from paths.txt"
 BACKUP_PATHS=()
@@ -47,7 +53,7 @@ for hook in "./hooks/"*; do
 done
 
 echo "Run restic backup"
-backup_output="$(./restic.sh backup "${BACKUP_PATHS[@]}" --json)"
+backup_output="$(restic backup "${BACKUP_PATHS[@]}" --json)"
 
 # Delete temporary folder
 rm -rf ./tmp
@@ -61,4 +67,9 @@ human_size=$(numfmt --to=iec-i --suffix=B "$data_bytes")
 notify-send "Restic Backup Complete" "Time: ${backup_time_rounded}s, Size: ${human_size}"
 
 echo "Forget old backups"
-./restic.sh forget --keep-daily 3 --keep-weekly 2 --keep-monthly 2 --group-by tags --prune
+restic forget \
+    --keep-daily $RESTIC_KEEP_DAILY \
+    --keep-weekly $RESTIC_KEEP_WEEKLY \
+    --keep-monthly $RESTIC_KEEP_MONTHLY \
+    --keep-yearly $RESTIC_KEEP_YEARLY \
+    --group-by tags --prune

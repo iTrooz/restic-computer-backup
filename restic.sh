@@ -1,4 +1,5 @@
 #!/bin/sh
+# Used for manual operations
 
 SCRIPTDIR=$(realpath "$(dirname "$0")")
 set -a
